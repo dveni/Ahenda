@@ -18,7 +18,7 @@ app.use(bodyParser.json());
  * Instead of using our fake globar array/db we are now calling mongoose npm and allowing it to connect to database
  * https://cloud.mongodb.com/
  */
-mongoose.connect("mongodb+srv://webdevredeption:webdevredeption@webdevredeption-l9eno.mongodb.net/test?retryWrites=true", { useNewUrlParser: true });
+mongoose.connect("mongodb+srv://admin:admin1234@ahenda-vsdmo.mongodb.net/test?retryWrites=true", { useNewUrlParser: true });
 
 /**
  * This is basic function to create schema/table/array of objects inside your database
@@ -36,8 +36,8 @@ const eventSchema = new mongoose.Schema({
 })
 
 /**
- * Here we are "assigning" our table to variable Bandit which 
- * will allow us to manipulate with Bandits inside database
+ * Here we are "assigning" our table to variable Event which 
+ * will allow us to manipulate with Events inside database
  */
 
 const Event = mongoose.model("Event", eventSchema);
@@ -76,30 +76,31 @@ app.post("/add", function (req, res) {
     * If you send POST request to http:localhost:3500/add
     * 
     * With body { name: Buffalo, bounty: 20000, currency: USD }
-    * We will create a new bandit in database
+    * We will create a new event in database
     */
 
     const { body: data } = req;
 
     console.log(data);
-    const newBandit = {
-        name: data.name,
-        bounty: data.bounty,
-        currency: data.currency,
-        claimed: false
+    const newEvent = {
+        Title: data.name,
+        Date: data.date,
+        Place: data.place,
+        Category: data.category,
+        Priority: data.priority
     }
-    Bandit.create(newBandit, function (err, created) {
+    Event.create(newEvent, function (err, created) {
         if (err) return handleError(err);
         res.send(created);
     });
 });
 
-app.get("/bandit", function(req,res){
+app.get("/", function(req,res){
    
     /**
-    * If you send GET request to http:localhost:3500/bandit
+    * If you send GET request to http:localhost:3500
     * 
-    * API will return all all bandits
+    * API will return all all events
     * In this function you can add query params in url 
     * And create search by name, currency, bounty ... 
     * 
@@ -108,58 +109,58 @@ app.get("/bandit", function(req,res){
     * Scroll down for example
     */
 
-    Bandit.find({}, function(err,bandits){ 
+    Event.find({}, function(err,events){ 
         if(err){
             res.send("NOT WORKING");
         }
-        res.send(bandits)
+        res.send(events)
     
     });
 
 });
 
-app.get("/search", function(req,res){
+// app.get("/search", function(req,res){
 
-    const {query} = req;
-    let searchObject = {};
-    if(query.name){
-     searchObject = Object.assign({}, {
-         name: query.name
-     });
-    }
+//     const {query} = req;
+//     let searchObject = {};
+//     if(query.title){
+//      searchObject = Object.assign({}, {
+//          title: query.title
+//      });
+//     }
 
-    /**
-     * In this example you can see when we are using to search inside
-     * our database we are using function Bandit.find(searchObject, callbackfunction [function to be executed after FIND finish])
-     * 
-     * 
-     */
-    Bandit.find(searchObject, function(err,bandits){ 
-        if(err){
-            res.send("NOT WORKING");
-        }
+//     /**
+//      * In this example you can see when we are using to search inside
+//      * our database we are using function Event.find(searchObject, callbackfunction [function to be executed after FIND finish])
+//      * 
+//      * 
+//      */
+//     Event.find(searchObject, function(err,events){ 
+//         if(err){
+//             res.send("NOT WORKING");
+//         }
 
-        /**
-         * Here you can add more logic 
-         */
+//         /**
+//          * Here you can add more logic 
+//          */
 
-        res.send(bandits)
+//         res.send(events)
     
 
-    });
+//     });
 
-    /**
-     * Anything under this line will be executed even we have res.sed inside callbackfunction in FIND
-     * So it's usually empty 
-     */
-});
+//     /**
+//      * Anything under this line will be executed even we have res.sed inside callbackfunction in FIND
+//      * So it's usually empty 
+//      */
+// });
 
-app.get("/searchAsync",async (req,res) => {
+app.get("/search",async (req,res) => {
 
     /**
      * There is another way to use FIND function with using async/await 
      * 
-     * When we have const bandits = Bandit.find(searchObj) we would get promise
+     * When we have const events = Event.find(searchObj) we would get promise
      * With await function we said to code, STOP, execute FIND, give me data and I will do the rest..
      * 
      * When you are working with async/await you should have try{}catch{} block
@@ -175,15 +176,15 @@ app.get("/searchAsync",async (req,res) => {
     
     const {query} = req;
     let searchObject = {};
-    if(query.name){
+    if(query.title){
         searchObject = Object.assign({}, {
-            name: query.name
+            title: query.title
         });
     }
 
     try {
-        const bandits = await Bandit.find(searchObject);
-        res.send({data : bandits});
+        const events = await Event.find(searchObject);
+        res.send({data : events});
     } catch (error) {
         console.log(error);
         res.send({data: []});
@@ -192,18 +193,18 @@ app.get("/searchAsync",async (req,res) => {
 
 
 
-app.put("/bandit/:id", function(req,res){
+app.put("/event/:id", function(req,res){
     /**
-    * If you send PUT request to http:localhost:3500/bandit/idOfBanditFromDB
+    * If you send PUT request to http:localhost:3500/event/idOfEventFromDB
     * 
-    * API will update that specific bandit by ID
+    * API will update that specific event by ID
     * Inside the body we send all required data 
     * 
     * https://mongoosejs.com/docs/queries.html
     * 
     */
     console.log(req.params.id);
-    Bandit.findOneAndUpdate(req.params.id, req.body, function(err, updated){
+    Event.findOneAndUpdate(req.params.id, req.body, function(err, updated){
         if(err){
             console.log(err);
             res.send(err);
