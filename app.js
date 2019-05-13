@@ -29,7 +29,7 @@ mongoose.connect("mongodb+srv://admin:admin1234@ahenda-vsdmo.mongodb.net/test?re
 
 const eventSchema = new mongoose.Schema({
     Title: String,
-    Date: Date,
+    Date: String,
     Place: String,
     Category: String,
     Priority: Number
@@ -40,7 +40,7 @@ const eventSchema = new mongoose.Schema({
  * will allow us to manipulate with Events inside database
  */
 
-const Event = mongoose.model("Event", eventSchema);
+const Event = mongoose.model("Event2", eventSchema);
 
 
 /*
@@ -83,7 +83,7 @@ app.post("/add", function (req, res) {
 
     console.log(data);
     const newEvent = {
-        Title: data.name,
+        Title: data.title,
         Date: data.date,
         Place: data.place,
         Category: data.category,
@@ -92,6 +92,7 @@ app.post("/add", function (req, res) {
     Event.create(newEvent, function (err, created) {
         if (err) return handleError(err);
         res.send(created);
+        
     });
 });
 
@@ -204,6 +205,7 @@ app.put("/event/:id", function(req,res){
     * 
     */
     console.log(req.params.id);
+    console.log(req.body);
     Event.findOneAndUpdate(req.params.id, req.body, function(err, updated){
         if(err){
             console.log(err);
