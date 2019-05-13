@@ -32,7 +32,8 @@ const eventSchema = new mongoose.Schema({
     Date: String,
     Place: String,
     Category: String,
-    Priority: Number
+    Priority: Number,
+    Description: String
 })
 
 /**
@@ -40,7 +41,7 @@ const eventSchema = new mongoose.Schema({
  * will allow us to manipulate with Events inside database
  */
 
-const Event = mongoose.model("Event2", eventSchema);
+const Event = mongoose.model("Event3", eventSchema);
 
 
 /*
@@ -87,7 +88,8 @@ app.post("/add", function (req, res) {
         Date: data.date,
         Place: data.place,
         Category: data.category,
-        Priority: data.priority
+        Priority: data.priority,
+        Description: data.description
     }
     Event.create(newEvent, function (err, created) {
         if (err) return handleError(err);
